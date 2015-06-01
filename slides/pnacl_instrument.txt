@@ -1,0 +1,39 @@
+gi1 ftgen 100,0,8,-2,0,.02,.04,.07,0.09,0,.04,.07
+ga1,ga2 init 0
+
+schedule 2,0,0.1,0.5,500,0.02,0
+instr 2
+ k1 linenr p4,0.01,0.1,0.01
+ a1 pluck k1, p5, p5, 0, 1, 1
+ a1, a2 pan2 a1, rnd(1)		    
+ outs a1,a2
+ schedule 2,0.1+gauss(0.01),0.1+rnd(0.4), 0.3+gauss(0.2),cpspch(7+int(gauss(3))+table:i(rnd(8),gi1))		    
+ ga1 += a1*0.5
+ ga2 += a2*0.5 
+endin
+
+instr 1
+ kx chnget "x" 
+ ky chnget "y"
+ kt[] fillarray 0,.02,.04,.07,.09,1.00,1.02, 1.04, 1.07, 1.09,2.00,2.02 
+ kenv linsegr 0, .01, 1, .1, 1, .25, 0
+ a1 vco2 ky * kenv * 1.5, port(cpspch(8+kt[int(kx*lenarray(kt))]),0.01), 0
+ a1 moogladder a1, 4000*(1+kx), 0.7
+ ga1 += a1
+ ga2 += a1 
+endin
+
+schedule 100, 0, -1
+instr 100
+ adelay init 0
+ adelay2 init 0
+ a1 = ga1 + adelay 
+ a2 = ga2 + adelay2
+ adelay vdelay3 a1 * .5, 510, 1000 
+ adelay2 vdelay3 a2 * .5, 490, 1000
+ aL, aR reverbsc a1, a2, .72, 5000
+ outs aL, aR
+ ga1 = 0
+ ga2 = 0
+endin
+

@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Csound on the Web</title>
+
+        <meta name="description" content="Presentation Slides for Csound on the Web">
+        <meta name="author" content="Victor Lazzarini, Edward Costello, Steven Yi, John ffitch">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/editor.css">
+        <link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+        <!-- Code syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+
+        <!--[if lt IE 9]>
+            <script src="lib/js/html5shiv.js"></script>
+            <![endif]-->
+
+            <style type="text/css">
+textarea.console { font-family: "Courier New"; color: #00FF00 ;
+    background-color: #000000 }
+   textarea.code { font-family: "Courier New"; color: black;
+       background-color:#B8F4F5 }
+            </style>
+
+            <script type="text/javascript" src="csound.js"></script>
+            <script type="text/javascript" src="js/FileManager.js"></script>
+            <script type="text/javascript" src="js/ace/ace.js"></script>
+            <script type="text/javascript" src="js/ParseInstrument.js"></script>
+            <script type="text/javascript" src="js/TextView.js"></script>
+            <script type="text/javascript">
+
+// functions called by csound.js
+
+// var console2 = null;
+//  function moduleDidLoad() {
+//   };
+
+// function attachListeners() {
+//     document.getElementById('playButton').addEventListener('click',
+//     csound.Play);
+//      document.getElementById('pauseButton').addEventListener('click',csound.Pause);
+//   }
+
+var count = 0;
+function handleMessage(message) {
+    if (console2) { 
+        console2.print(message.data, false);
+    }
+    <!--var element = document.getElementById('console');-->
+        <!--element.value += message.data;-->
+        <!--element.scrollTop = 99999; // focus on bottom-->
+    count += 1;
+    if(count == 10) {
+        <!--element.value = ' ';-->
+            count = 0;
+    }
+}
+            </script>
+            <script src="processingjs_example/processing.js" type="text/javascript"></script>
+            <script type="text/javascript">
+// convenience function to get the id attribute of generated sketch html element
+function getProcessingSketchId () { return 'processingjsexample'; }
+            </script>
+            <script src="processingjs_example/processingjs_example.js" type="text/javascript"></script>
+
+            <!--Emscripten Code Start-->
+
+            <script type="text/javascript" src="Emscripten/libcsound.js"></script>
+
+            <script>
+var csoundObj; 
+
+Module['noExitRuntime'] = true;
+Module['_main'] = function() {
+
+    csoundObj = new CsoundObj();
+
+    var editorDiv = document.getElementById("editor1")
+        var editor1 = new TextView(editorDiv, csoundObj.evaluateCode, "editor");
+
+    <!--var consoleDiv = document.getElementById("console1")-->
+        <!--var consoleView = new TextView(consoleDiv, null, "console");-->
+        <!--consoleView.print("Welcome to Csound Emscripten!");-->
+        <!--Module['print'] = Module['printErr'] = consoleView.print -->
+
+        var fileManger = new FileManager(['csd', 'txt', 'wav'], console.log);
+
+    fileManger.fileUploadFromServer("amen.wav", function() {
+
+        fileManger.fileUploadFromServer("bass.wav", function() {
+
+            fileManger.fileUploadFromServer("blank.csd", function() {
+
+                csoundObj.compileCSD("blank.csd");
+            });
+
+        });
+    });
+
+
+
+
+    fileManger.fileUploadFromServer("instruments.txt", function() {
+
+        var string  =  fileManger.readFileAsString("instruments.txt");
+        editor1.setValue(string, -1);
+    });
+
+    var startButton = document.getElementById("csoundObjStartButton");
+    var stopButton = document.getElementById("csoundObjStopButton");
+    startButton.onclick = function() {
+        csoundObj.start();
+    };
+
+
+    stopButton.onclick = function() {
+        
+        csoundObj.stop();
+        csoundObj.reset();
+        csoundObj.compileCSD("blank.csd");
+    };
+    //var consoleDiv2 = document.getElementById("console2")
+    //console2 = new TextView(consoleDiv2, null, "console");
+    var editorDiv2 = document.getElementById("editor2")
+        var editor2 = new TextView(editorDiv2, csound.CompileOrc, "editor");
+
+    var fileManger2 = new FileManager(['csd', 'txt'], console.log);
+    fileManger2.fileUploadFromServer("pnacl_instrument.txt", function() {
+        var string2  =  fileManger2.readFileAsString("pnacl_instrument.txt");
+        editor2.setValue(string2, -1);
+    });
+
+    console.log("done setting editor");
+
+
+};
+
+            </script>
+
+            <!--Emscripten Code Finish-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                    <h2>Extending Csound to the Web</h2>
+                    <!--do we need a subtitle?-->
+                    <p>
+                    <small>Victor Lazzarini, Edward Costello, Steven Yi, John ffitch</small>
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Introduction</h2>
+                    <ul>
+                        <li>Csound Ecosystem</li>
+                        <li>Emscripten</li>
+                        <li>Portable Native Client (PNaCl)</li>
+                        <li>Demos</li>
+                        <li>Conclusions</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Csound</h2>
+                        <ul>
+                            <li>Member of the Music-N family of languages</li>
+                            <li>Originally created by Barry Vercoe, MIT 1986</li>
+                            <li>Open Source, community-driven project</li>
+                            <li>Licensed under LGPL in 2002</li>
+                        </ul>
+                        <p> <a
+                 href=http://csound.github.io>
+                            csound.github.io </a> </p>
+                    </section>
+                    <section>
+                        <h2>Csound Example</h2>
+                        <pre><code>
+            ;; ORC Code 
+            instr 1
+              asig = vco2(0.5, cpspch(p4))
+              kenv = adsr(0.05, 0.05, 0.9, 0.1) * ampdbfs(p5)
+              asig = moogladder(asig, 4000, 0.25) * kenv
+
+              out(asig)
+            endin
+
+            schedule(1, 0.0, 1.5, 8.00, -12)
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Csound Example</h2>
+                        <pre><code>
+            ;; ORC Code 
+            instr 1
+              asig = vco2(0.5, cpspch(p4))
+              kenv = adsr(0.05, 0.05, 0.9, 0.1) * ampdbfs(p5)
+              asig = moogladder(asig, 4000, 0.25) * kenv
+
+              out(asig)
+            endin
+                        </code></pre>
+                        <pre><code>
+            ;; SCO Events
+            i1 0.0 1.5 8.00 -12
+            i1 1.0 1.0 9.00 -12
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Technological Change</h2>
+                        <p>Cross-platform Compiler =&gt; Cross-platform Library (API)</p>
+                        <p>Making Music =&gt; Making Music Software</p>
+                    </section>
+                    <section>
+
+                        <h2>Ecosystem</h2>
+                        <p> Csound has been employed in a
+                        variety of ways, on a
+                        variety of platforms... </p>
+                        <ul>
+                            <li> Supercomputers (e.g. at projects in ICHEC) </li>
+                            <li> Desktop (Linux, OSX, Windows, BSD, Solaris,
+                                Haiku...) </li>
+                            <li> Mobile (iOS, Android) </li>
+                            <li> Embedded (RPi, Beagleboard, Intel Galileo and
+                                Edison) </li>
+                            <li class="fragment fade-in">Web (JavaScript via Emscripten, Portable NativeClient)</li>
+                        </ul>
+                        <!--<br>-->
+                        <!--<a href="#/2">-->
+                        <!--  <img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">-->
+                        <!--</a>-->
+                    </section>
+
+                    <section>
+                        <h2>Goals</h2>
+                        <ul>
+                            <li>For Csound users: extend value of Csound knowledge and prior work</li>
+                            <li>Use the same Engine across all platforms</li>
+                            <li>Create web-based music making and learning tools</li>
+                            <li>Make creative works easy to deploy</li>
+                            <li>Preserve musical works by creating web versions</li>
+                            <li>Interoperate with web technologies as first-class member</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <!--Emscripten Section & Example-->
+                    <section>
+                        <h2>Javascript Csound</h2>
+                        <ul>
+                            <li>Core library written in C, only dependency is libsndfile</li>
+                            <li>Enables cross-compilation to Javascript using Emscripten with minor source code changes</li>
+                            <li>Embedded in a web page as a Javascript file and controlled via Csound Javascript API</li>
+                        </ul> 
+                    </section>
+
+                    <section>
+                        <h2>Javascript Csound</h2>
+                        <ul>
+                            <li>Runs in any modern browser</li>
+                            <li>Performance varies depending on javascript engine optimisations</li>
+                            <li>Plugin opcodes not supported</li>   
+                        </ul> 
+                    </section>
+                    <section>
+
+
+                        <section>
+                            <div id="editor1"></div> 
+                            <p>
+                            <!--<div id="console1"></div> -->
+
+                            <button id="csoundObjStartButton">Start</button>
+                            <button id="csoundObjStopButton">Stop</button>
+                        </section>
+                    </section>
+                </section>
+
+                <section>
+                    <!-- pNaCl Section & Example-->		    
+                    <section>
+                        <h2>PNaCl Csound</h2>
+                        <ul>
+                            <li> PNaCl is HW-independent sandboxing
+                                technology, with a C/C++ cross-compilation toolchain.</li>
+                            <li> libcsound and libsndfile have been ported to PNaCl.</li> 
+                            <li> A C++ frontend was developed, using Pepper for message
+                                passing and audio IO, with a Javascript interface
+                                for programmatic control.</li>
+                        </ul> 
+                    </section>
+
+                    <section>
+                        <h2>PNaCl Csound</h2>
+                        <ul>
+                            <li>Straightforward way of creating audio apps
+                                for web deployment</li>
+                            <li>Good latency and compute power</li>
+                            <li>Currently only under Chrome/Chromium on
+                                Desktop, but Android support on the way.</li>
+                        </ul> 
+                    </section>	    
+                    <section>
+                        <div id="editor2"></div>		   
+                        <p>
+                        <!--<div id="console2"></div>-->		    
+                        <!--<p>-->
+                        <!--<textarea class="console" cols="100" rows="15" id="console"-->
+                        <!--value="">Csound: not loaded</textarea>-->
+                        <!--</p>-->
+                        <!--pNaCl csound module-->
+                        <div id="engine"></div>
+                    </section>
+                    <section>
+                        <div id="content">
+                            <div>
+                                <canvas id="processingjsexample" data-processing-sources="processingjs_example/processingjs_example/processingjs_example.pde" 
+                                                                 width="800" height="600">
+                                    <p>Your browser does not support the canvas tag.</p>
+                                    <!-- Note: you can put any alternative content here. -->
+                                </canvas>
+                                <noscript>
+                                    <p>JavaScript is required to view the contents of this page.</p>
+                                </noscript>
+                            </div>
+                            <textarea id="orc" style="display:none">
+
+                                ga1 init 0
+
+                                instr 1
+                                itie tival
+
+                                kx chnget "x" 
+                                ky chnget "y"
+
+                                kt[] fillarray 0,.02,.04,.07,.09,1.00,1.02, 1.04, 1.07, 1.09,2.00,2.02 
+
+                                kenv linsegr 0, .01, 1, .1, 1, .25, 0
+                                a1 vco2 ky * .5 * kenv, port(cpspch(8+kt[kx*lenarray(kt)]),0.01), 0
+
+                                ga1 = ga1 + a1
+
+                                endin
+
+                                instr 2
+
+                                ;kcutoff chnget "cutoff"
+                                ;kresonance chnget "resonance"
+
+                                kcutoff = 6000
+                                kresonance = .2
+
+                                adelay init 0
+                                a1 moogladder ga1, kcutoff, kresonance
+
+                                a1 += adelay
+                                adelay vdelay3 a1 * .5, 500, 1000
+                                aL, aR reverbsc a1, a1, .72, 5000
+
+                                outs aL, aR
+
+                                ga1 = 0
+
+                                endin
+                            </textarea>
+
+                            <textarea id="sco" style="display:none">
+                                i2 0 360000
+                            </textarea>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>Performance metrics</h2>
+
+                    <p> Basic measurements have been taken with a classic Csound
+                    example (Boulanger,<i> Trapped in Convert </i>, 4m50s): </p>
+                    <ul>
+                        <li> CLI csound (native) - 1.1s</li>
+                        <li> Emscripent csound - 4.4s </li>
+                        <li> PNaCl csound - 1.8s</li>
+                    </ul>
+
+                    <p>[OSX10, Intel Core i7 2.8GHZ (quad), Chrome]</p>
+                </section>
+
+                <section>
+                    <h2>Projects & Applications</h2>
+                    <ul>
+                        <li><a href="http://csound-notebook.kunstmusik.com">Csound Notebook</a></li>
+                        <li> Manual examples </li>
+                        <li> <i> <a href="http://csound.github.io/trycsound.html"> Try it online!</a></i> </li>
+                        <li> Community-driven <i><a href="http://csound.github.io/learn-csound-site">Learn Csound</a></i> project</li>
+                        <!--<li><a href="processingjs_example/index.html">Processing.js + Csound</a></li>-->
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>Conclusions</h2>
+                    <p> With this work, we have enabled Csound to be used in client-side
+                    web applications, adding another side to an ecosystem that traverses
+                    a great number of platforms from HPC to embedded.
+                    </p>
+                    <p>
+                    A number of projects are already under way using this
+                    technology, but we are interested in supporting a variety of others
+                    through the further development of the Csound libraries for the Web. 
+                    </p>
+
+                </section>
+
+
+                        </div>
+
+            </div>
+
+            <script src="lib/js/head.min.js"></script>
+            <script src="js/reveal.js"></script>
+
+            <script>
+
+// Full list of configuration options available at:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+    minScale:1,
+    maxScale:1,
+    transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+    dependencies: [
+    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: 'plugin/zoom-js/zoom.js', async: true },
+            { src: 'plugin/notes/notes.js', async: true }
+    ]
+});
+
+            </script>
+
+    </body>
+</html>

@@ -1,0 +1,167 @@
+giAmen = ftgen(1, 0, 0, 1, "amen.wav", 0, 0, 0)
+giBass = ftgen(2, 0, 0, 1, "bass.wav", 0, 0, 0)
+
+giSynthNotes = ftgen(0, 0, 32, -2,  
+0, 13, 12, 12, 0, 24, 12, 0, 
+10, 24, 0, 10, 24, 0, 8, 8,
+ 0, 7, 27, 0, 5, 5, 24, 7, 7, 
+ 0, 8, 8, 0, 10, 10, 16)
+ 
+giBassNotes = ftgen(0, 0, 64, -2, 
+ 1,  -1,  -1,  -1, -1, -1, 0, -1,
+-1, -1, 0, -1, -1, -1, -1, -1,
+ -1, -1, -1, -1, 0, -1, 0, 0,
+-1, -1, 0, -1, -1, 0, -1, -1,
+ 1,  -1,  -1,  -1, -1, -1, 0, -1,
+-1, -1, 0, -1, -1, -1, -1, -1,
+ -1, -1, -1, -1, 1, -1, 0, 0,
+-1, -1, 0, -1, -1, 0, -1, -1)
+
+schedule "AudioOut", 0, 200
+schedule "Clock", 0, 200
+schedule "Notes", 0, 200
+
+
+opcode Trigger, k, ak
+	kprevious init 1
+
+	aPhasor, kSubdivide xin
+	kPhasor = k(aPhasor) % (kSubdivide)
+	kdifference = kPhasor - kprevious
+	kprevious = kPhasor
+	kTrigger = kdifference < 0 ? 1 : 0
+	xout kTrigger
+
+endop
+
+opcode PhaseMod , a, aik
+
+
+	aPhasor, iSeed, kSubdivide xin
+	kTrigger Trigger aPhasor, kSubdivide
+	
+	if kTrigger == 1 then
+
+		kcurrent = (int((rand(2, iSeed)+2))) 
+		kcurrent = 2^kcurrent
+
+	endif
+		
+	aPhasor = aPhasor % (1/kcurrent * 2)
+	aPhasor += 1/kcurrent
+
+	aSignal = aPhasor
+	xout aSignal
+endop
+
+giLoopLengthSeconds = 1.3
+
+instr Clock
+
+	gaLoopLengthPhasor = phasor(1/giLoopLengthSeconds)
+	gaLoopModPhasor PhaseMod gaLoopLengthPhasor, 1, 1/8
+	gklfo = lfo(1, 1/giLoopLengthSeconds) + 1
+
+endin
+
+gaAudioOut[] init 2
+
+instr Pluck
+
+	iDetune = 0.01
+	aOsc = vco2(0.1, cpsmidinn(p4))
+;	aOsc += pluck(0.2, cpsmidinn(p4) * (1+iDetune), cpsmidinn(p4) * (1+iDetune), 1, 1) 
+;	aOsc += pluck(0.2,cpsmidinn(p4) * (1-iDetune), cpsmidinn(p4) * (1-iDetune), 1, 1)
+
+;   aOsc *=adsr(0.001, 0.001, 1, .1)
+;	aRes areson aOsc, 200 + 1000 * gklfo, 200 
+;	aOsc balance aRes, aOsc
+;	
+
+;	aOsc distort1 aOsc, 10, 0.1, .001, .001, 1
+	gaAudioOut[0] = aOsc + gaAudioOut[0]
+endin
+
+
+instr Bass
+
+	aline line 0, 1, ftlen(giBass)/sr
+	aADSR = expon(1, 1, 0.001)
+	aOut mincer aline, 1, (3/220) * cpsmidinn(p4), giBass, 1, 2048, 4
+	aOut distort1 aOut, 24, 0.05, .001, .001, 1
+	aOut *= aADSR
+	gaAudioOut[0] = aOut + gaAudioOut[0]
+endin
+
+
+instr Beats
+
+
+iTableLength =  ftlen(giAmen) / sr
+iTableOver8 = (iTableLength / 8)
+gaLoopModPhasor *= iTableOver8
+
+amincer, asig  mincer gaLoopLengthPhasor * iTableOver8 + iTableOver8, 1, 1, 1, 1, 64, 4
+;amincer, asig  mincer gaLoopModPhasor, 1, 1, 1, 1, 64, 4
+
+asig = amincer
+
+;gaAudioOut[0] = asig + gaAudioOut[0]
+endin
+
+instr AudioOut
+
+	iLimit = 0.5
+	gaAudioOut[0] limit gaAudioOut[0], -iLimit, iLimit
+
+	areverb reverb gaAudioOut[0], 1
+	gaAudioOut[0] = gaAudioOut[0] + areverb * 0.1
+	outs gaAudioOut[0], gaAudioOut[0]
+	gaAudioOut[0] = 0
+
+endin
+
+instr Notes
+	
+	kSubdivide = 1/8
+	kSynthTrigger Trigger gaLoopLengthPhasor, kSubdivide
+
+	kCurrentSynthNote init 0
+
+	kSynthNoteValue table kCurrentSynthNote, giSynthNotes, 1
+
+	if (kSynthTrigger == 1) then
+	
+		if (kCurrentSynthNote == 0) then
+		
+			event "i", "Beats", 0, giLoopLengthSeconds * 4
+
+		endif
+		
+		event "i", "Pluck", 0, 1/giLoopLengthSeconds/4, kSynthNoteValue + 50 - 12
+
+		kCurrentSynthNote += 1/32
+		kCurrentSynthNote = kCurrentSynthNote % 1
+		
+
+		printk2 kSynthNoteValue
+		
+	endif
+	
+;	kCurrentBassNote init 0
+;	kBassTrigger Trigger gaLoopLengthPhasor, kSubdivide / 2
+;	kBassNoteValue table kCurrentBassNote, giBassNotes, 1
+;
+;	if (kBassTrigger == 1) then
+;	
+;		if (kBassNoteValue != -1) then
+;			event "i", "Bass", 0, giLoopLengthSeconds * 8, kBassNoteValue + 66 - 12
+;		endif
+;		kCurrentBassNote += 1/64
+;		kCurrentBassNote = kCurrentBassNote % 1
+;		
+;	endif
+
+
+
+endin
