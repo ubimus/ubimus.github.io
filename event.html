@@ -10,11 +10,10 @@
   document.addEventListener("click", PlaySound);
  }
  function PlaySound(){
-csound.Event("i 1 0 0.5 " +
+  csound.Event("i 1 0 0.5 " +
               (1-(event.clientY-60)/90)
                + " " +
               (event.clientX+400));
- console.log(event.clientY);
  }
  </script> 
 </head> 
@@ -28,7 +27,7 @@ csound.Event("i 1 0 0.5 " +
   <div id="engine"></div> 
   <textarea id="orc" style="display:none">
   instr 1
-   out(oscil(p4,p5*(1+chnget:k("freq")/100)))
+   out(oscil(p4,p5))
   endin
   </textarea>
 </body> 
