@@ -1,0 +1,35 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+ <title>Event Example</title> 
+ <script type="text/javascript" src="csound.js"></script> 
+ <script type="text/javascript"> 
+ function moduleDidLoad() {
+  csound.Play();
+  csound.CompileOrc(document.getElementById("orc").value);
+  document.addEventListener("click", PlaySound);
+ }
+ function PlaySound(){
+csound.Event("i 1 0 0.5 " +
+              (1-(event.clientY-60)/90)
+               + " " +
+              (event.clientX+400));
+ console.log(event.clientY);
+ }
+ </script> 
+</head> 
+<body>
+  <p>
+  <div id="console"> </div>
+  <hr>
+  <h1> CLICK AREA </h1>
+  <hr>
+  <!--pNaCl csound module--> 
+  <div id="engine"></div> 
+  <textarea id="orc" style="display:none">
+  instr 1
+   out(oscil(p4,p5*(1+chnget:k("freq")/100)))
+  endin
+  </textarea>
+</body> 
+</html>
