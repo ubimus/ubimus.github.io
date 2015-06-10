@@ -35,6 +35,19 @@
     border-width: 1px;
 }
 
+#editor3 {
+
+    width:930px;
+    height:630px;
+    text-align:left;
+    font-size:12px;
+    border-color:#8F908A;
+    border-style: solid;
+    border-width: 1px;
+}
+
+
+
 #console2 {
 
     width:930px;

@@ -146,7 +146,12 @@ Module['_main'] = function() {
     var fileManger2 = new FileManager(['csd', 'txt'], console.log);
     fileManger2.fileUploadFromServer("pnacl_instrument.txt", function() {
         var string2  =  fileManger2.readFileAsString("pnacl_instrument.txt");
-        editor2.setValue(string2, -1);
+editor2.setValue(string2, -1);
+
+        var editorDiv3 = document.getElementById("editor3")
+        var editor3 = new TextView(editorDiv3, eval, "editor");
+
+
     });
 
     console.log("done setting editor");
@@ -420,15 +425,237 @@ Module['_main'] = function() {
 
                 </section>
 
+		<section>
                 <section>
-  
-
+                 <h1> Tutorial </h1>                      		   
                 </section>
 
+                <section>
+                 <h2> Website Dependencies </h2>
+		<ul>
+                <li> csound.js </li>
+                <li> ./pnacl/Release/csound.pexe </li>
+		<li> ./pnacl/Release/csound.nmf </li>
+		</ul>
+		<p>
+		These are currently released in sourceforge as: <br>
+		<a
+                 href=http://sourceforge.net/projects/csound/files/csound6/Csound6.05/csound6.05-pnacl.tar.gz/download>
+		csound6.05-pnacl.tar.gz
+		</a>
+		</p>
+                </section>
+		    
+		<section>
+                 <h2>Starting up</h2> 
+		    <pre><code> <script src="csound.js">// loads csound object </script></code></pre>
+		<p> Csound can generally be started as we load the
+		Csound module,
+		</p>
+		<pre><code> // callback invoked as the module gets loaded
+ function ModuleDidLoad() {
+  csound.Play();  // starts Csound
+ }
+</code></pre>
+		</section>
+		<section>
+                 <h2>Making Sound</h2> 
+		<pre><code>
+                var nwl = "\n"; 
+                csound.CompileOrc(
+                  "instr 1" + nwl +
+                  "out(oscil(p4,p5))" +  nwl +
+                  "endin" +  nwl +
+                  "schedule(1,0,2,0.5,500)" 
+                 );
+                </code></pre>
+		</section>
+		<section>
+               <p>Alternatively, use HTML to hold the code</p> 
+		<pre><code>
+&lt;textarea id=&quot;orc&quot; style=&quot;display:none&quot;&gt;
 
-                        </div>
+ instr 1
+  out(oscil(p4,p5))
+ endin
 
-            </div>
+ schedule(1,0,2,0.1,700)
+ &lt;/textarea&gt;
+		</code></pre>
+		<p> and read it in the script </p>
+<pre><code>
+ csound.CompileOrc(document.getElementById("orc").value);
+</code></pre>
+		</section>
+
+<section>
+<h2>Instruments and Instances</h2>
+<p>The code used above has two distinct elements, the <it> instrument </it> <p>
+		<pre><code> instr 1
+  out(oscil(p4,p5))
+ endin </code></pre>
+		<p>
+		and the call to schedule it, creating a running <it>
+		instance </it>
+		</p>
+		<pre><code> schedule(1,0,2,0.1,700)	</code></pre>
+		<p>
+		with an instrument number (1), a start time (0), a duration(2), and two parameters
+		(0.1 and 700, used for amplitude and frequency, respectively)
+		</p>
+		</section>
+<section>
+<h2>Playing from Javascript</h2>
+<p> In addition to creating instances inside Csound code, we can also do it from Javascript, <p>
+<pre><code> csound.Event("i 1 0 2 0.1 700") </code></pre>
+<p>
+This uses Csound's numeric score event format: i (for instrument instance)
+followed by the parameters as before (numbers, start time, duration,
+etc.), <b> separated by spaces </b>. More than one such lines can be
+sent, one for each instance to be created in the string passed to
+the function.
+</p>
+</section>	
+		<section>
+		<h2> Controls</h2>
+		<p> Realtime controls use named bus channels, set with</p>
+		<pre><code>
+                 csound.SetChannel("freq", val);
+		</code></pre>
+		<p> and retrieved in a Csound instrument: <p>
+	        <pre><code>
+                 out(oscil(p4,p5+chnget:k("freq")))
+		</code></pre>	
+		</section>
+		<section>
+		<h2>Connecting to HTML elements</h2>
+		An event listener needs to be set for this:
+	        <pre><code>
+ document.getElementById("freq").addEventListener("input",SetFreq);
+		</code></pre>
+		which then calls a function to set the data in a channel:
+	        <pre><code>
+ function SetFreq(){
+  csound.SetChannel("freq",document.getElementById("freq").value); 
+ }
+</code></pre>
+</section>
+<section>
+<p> Any suitable HTML5 input can be used to set the channel, such as <p>
+<pre><code>
+&lt;input type=&quot;range&quot; name=&quot;frequency&quot; id=&quot;freq&quot; step=&quot;1&quot; value=&quot;50&quot;
+   min=&quot;0&quot; max=&quot;100&quot;&gt; frequency &lt;/p&gt;
+</code></pre>
+</section>
+</section>
+<section>
+<section> 
+<h1>A Complete Example</h1>
+</section>
+<section> 
+<h2>HTML body</h2>
+<pre><code>
+&lt;body&gt;
+  &lt;p&gt;
+  &lt;input type=&quot;range&quot; name=&quot;frequency&quot; id=&quot;freq&quot; step=&quot;1&quot; value=&quot;50&quot;
+   min=&quot;0&quot; max=&quot;100&quot;&gt; frequency &lt;/p&gt; 
+  &lt;div id=&quot;console&quot;&gt; &lt;/div&gt; 
+  &lt;!--pNaCl csound module--&gt; 
+  &lt;div id=&quot;engine&quot;&gt;&lt;/div&gt; 
+  &lt;textarea id=&quot;orc&quot; style=&quot;display:none&quot;&gt;
+  instr 1
+   out(oscil(p4,p5*(1+chnget:k(&quot;freq&quot;)/100)))
+  endin
+  schedule(1,0,120,0.1,700)
+  &lt;/textarea&gt;
+&lt;/body&gt;
+</code></pre>
+</section>
+<section> 
+<h2>Javascript code</h2>
+<pre><code>
+ &lt;script type=&quot;text/javascript&quot; src=&quot;csound.js&quot;&gt;&lt;/script&gt; 
+ &lt;script type=&quot;text/javascript&quot;&gt; 
+ function moduleDidLoad() {
+  csound.Play();
+  csound.CompileOrc(document.getElementById(&quot;orc&quot;).value);
+  document.getElementById(&quot;freq&quot;).addEventListener(&quot;input&quot;,SetFreq);
+ }
+ function SetFreq(){
+  csound.SetChannel(&quot;freq&quot;,document.getElementById(&quot;freq&quot;).value); 
+ }
+ &lt;/script&gt;
+</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h1> Workshop Project </h1>
+</section>
+<section>
+<h2> Synthesiser Page </h2>
+<p>
+You will create a HTML page that implements a simple subtractive
+synthesiser. The Csound code for the instrument is provided, with
+a number of controls that are connected to channels. You will then
+write the code to create the page that runs the synthesiser.
+</p>
+</section>
+<section>
+<h2> The Instrument </h2>
+<p>
+<pre><code>
+chnset 0.01, "attack"
+chnset 0.01, "decay"
+chnset 0, "det"
+chnset 1, "amp"
+chnset 1000, "cfreq" 
+chnset 0.7, "res"
+chnset 0.5, "pan"
+instr 1
+a1 vco2 p4*chnget:k("amp"),cpsmidinn(p5)*(1+chnget:k("det"))
+a2 moogladder a1,chnget:k("cfreq"),chnget:k("res")
+a3 linenr a2,chnget:i("attack"),chnget:i("decay"),0.01
+al,ar pan2 a3, chnget:k("pan")
+   outs al, ar
+</code></pre>
+</p>
+</section>
+<section>
+<h2> Controls and ranges </h2>
+<p>
+attack: time in secs (&gt; 0) <br>
+decay: time in secs  (&gt; 0) <br>
+det: detuning <br>
+amp: amplitude (&lt; 1) <br>
+cfreq: filter centre frequency in Hz <br>
+res: filter resonance  (&lt; 1) <br>
+pan: pan position (0 &lt; pos &lt; 1)
+</p>
+</section>
+<section>
+<h2> Instrument parameters </h2>
+<p>
+Instrument instances have two parameters, in addition to
+number, start time, and duration. These are amplitude (&lt; 1)
+and fundamental frequency (in MIDI note number). </p>
+<p>
+MIDI note numbers are organised in semitones, 60 is middle C,
+61 is C sharp, etc.. Concert "A" is 69.
+</p>
+</section>
+<section>
+<h2> HTML Template </h2>
+<p>
+A HTML template is provided in the ubimus.github.io repository: 
+</p>
+<p>
+
+</p>
+</section>
+</section>
+</div>
+</div>
 
             <script src="lib/js/head.min.js"></script>
             <script src="js/reveal.js"></script>

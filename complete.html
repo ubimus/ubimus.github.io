@@ -1,11 +1,7 @@
 <!DOCTYPE html> 
 <html> 
-<!-- 
- Csound pnacl minimal example 
- Copyright (C) 2013 V Lazzarini 
---> 
 <head> 
- <title>Minimal Csound Example</title> 
+ <title>Complete Example</title> 
  <script type="text/javascript" src="csound.js"></script> 
  <script type="text/javascript"> 
  function moduleDidLoad() {
@@ -13,15 +9,9 @@
   csound.CompileOrc(document.getElementById("orc").value);
   document.getElementById("freq").addEventListener("input",SetFreq);
  }
-
  function SetFreq(){
   csound.SetChannel("freq",document.getElementById("freq").value); 
  }
-
- function handleMessage(message) {
-  var mess = message.data;
-  console.log(mess)
-}
  </script> 
 </head> 
 <body>

@@ -1,0 +1,36 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+ <title>Project Template</title> 
+ <script type="text/javascript" src="csound.js"></script> 
+ <script type="text/javascript"> 
+ function moduleDidLoad() {
+  csound.Play();
+  csound.CompileOrc(document.getElementById("orc").value);
+ }
+ </script> 
+</head> 
+<body>
+<p>
+<hr>
+<div id="console"> </div>
+<hr>
+  <!--pNaCl csound module--> 
+  <div id="engine"></div> 
+  <textarea id="orc" style="display:none">
+chnset 0.01, "attack"
+chnset 0.01, "decay"
+chnset 1, "freq"
+chnset 1, "amp"
+chnset 1000, "cfreq" 
+chnset 0.7, "res"
+chnset 0.5, "pan"
+instr 1
+a1 vco2 p4*chnget:k("amp"),cpsmidinn(p5)*(1+chnget:k("freq"))
+a2 moogladder a1,chnget:k("cfreq"),chnget:k("res")
+a3 linenr a2,chnget:i("attack"),chnget:i("decay"),0.01
+al,ar pan2 a3, chnget:k("pan")
+   outs al, ar
+  </textarea>
+</body> 
+</html>
