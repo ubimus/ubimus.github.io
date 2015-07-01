@@ -7,7 +7,13 @@
  function moduleDidLoad() {
   csound.Play();
   csound.CompileOrc(document.getElementById("orc").value);
- }
+  // csound.Event("i 1 0 2 0.5 60");
+}
+
+ function handleMessage(message) {
+  var mess = message.data;
+  console.log(mess)
+}
  </script> 
 </head> 
 <body>
@@ -30,7 +36,8 @@ a1 vco2 p4*chnget:k("amp"),cpsmidinn(p5)*(1+chnget:k("freq"))
 a2 moogladder a1,chnget:k("cfreq"),chnget:k("res")
 a3 linenr a2,chnget:i("attack"),chnget:i("decay"),0.01
 al,ar pan2 a3, chnget:k("pan")
-   outs al, ar
+  outs al, ar
+endin
   </textarea>
 </body> 
 </html>
