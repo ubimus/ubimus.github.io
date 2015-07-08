@@ -1,0 +1,44 @@
+
+body {
+	font-family: Ubuntu, sans-serif;
+	font-weight: 300;
+	margin: 30px;
+	height: 100%;
+}
+
+html { 
+  background: url(img/bg.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100%;
+}
+
+#container {
+	margin:  auto;
+	border: 2px solid #fdd;
+	border-radius: 7px;
+	padding: 30px;
+	background:rgba(255, 255, 255, 0.85);
+
+	
+}
+
+h1 { color: gray;}
+h2 { font-family: Ubuntu, sans-serif; font-weight: 300; }
+p, li, li a { font-family: Ubuntu, sans-serif; font-weight: 300; }
+
+li a {
+	text-decoration:none;
+}
+
+address {
+	margin-top: 50px;
+	font-size: 0.9em;
+	color: gray;
+}
+
+.direita {
+	float: right;
+}
