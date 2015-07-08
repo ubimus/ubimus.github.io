@@ -17,7 +17,7 @@ html {
 
 #container {
 	margin:  auto;
-	border: 2px solid #fdd;
+	border: 2px solid gray;
 	border-radius: 7px;
 	padding: 30px;
 	background:rgba(255, 255, 255, 0.85);
