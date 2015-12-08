@@ -1,0 +1,8 @@
+instr 2
+ asig = diskin:a("http/ellie.wav",1)
+ out(pvsynth( /* synth */
+     pvscale(    /* transpose */
+     pvsanal(asig,p(5),p(5)/8,p(5),1), /* analysis */
+     p(4),1))+asig)
+endin                  
+schedule(2,0,20,1.25,2048)

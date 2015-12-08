@@ -1,0 +1,10 @@
+instr 1
+ asig = vco2(
+     linenr(ampdbfs(p(4)),0.005,p(3),0.01),
+     p(5))
+ outs(asig*cos(p(6)),asig*sin(p(6)))
+ schedule(1,0.02+rnd(0.1),0.2+gauss(0.15),
+          -18+gauss(12),750+gauss(500), 
+          rnd($M_PI/2))
+endin                  
+schedule(1,0,0.1,-12,500,0)

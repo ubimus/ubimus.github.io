@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Audio Programming for the Web</title>
+
+        <meta name="description" content="Audio Programming for the Web">
+        <meta name="author" content="Victor Lazzarini">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/editor.css">
+        <link rel="stylesheet" href="css/theme/serif.css" id="theme">
+
+        <!-- Code syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+
+        <!--[if lt IE 9]>
+            <script src="lib/js/html5shiv.js"></script>
+            <![endif]-->
+
+            <style type="text/css">
+textarea.console { font-family: "Courier New"; color: #00FF00 ;
+    background-color: #000000 }
+   textarea.code { font-family: "Courier New"; color: black;
+       background-color:#B8F4F5 }
+            </style>
+
+            <script type="text/javascript" src="csound.js"></script>
+            <script type="text/javascript" src="js/FileManager.js"></script>
+            <script type="text/javascript" src="js/ace/ace.js"></script>
+            <script type="text/javascript" src="js/ParseInstrument.js"></script>
+            <script type="text/javascript" src="js/TextView.js"></script>
+            <script type="text/javascript">
+
+var count = 0;
+function handleMessage(message) {
+   console.log(message.data);
+    count += 1;
+    if(count == 10) {
+            count = 0;
+    }
+}
+</script>          
+<script type="text/javascript" src="Emscripten/libcsound.js"></script>
+
+<script>
+function moduleDidLoad() {
+    var editorDiv2 = document.getElementById("editor2")
+        var editor2 = new TextView(editorDiv2, csound.CompileOrc, "editor");
+
+    var fileManger2 = new FileManager(['csd', 'txt'], console.log);
+    fileManger2.fileUploadFromServer("synth.txt", function() {
+        var string2  =  fileManger2.readFileAsString("synth.txt");
+        editor2.setValue(string2, -1);
+     });
+
+    var editorDiv3 = document.getElementById("editor3")
+        var editor3 = new TextView(editorDiv3, csound.CompileOrc, "editor");
+
+    var fileManger3 = new FileManager(['csd', 'txt'], console.log);
+    fileManger3.fileUploadFromServer("pvscale.txt", function() {
+        var string3  =  fileManger3.readFileAsString("pvscale.txt");
+        editor3.setValue(string3, -1);
+    });
+
+    var editorDiv4 = document.getElementById("editor4")
+        var editor4 = new TextView(editorDiv4, csound.CompileOrc, "editor");
+
+    var fileManger4 = new FileManager(['csd', 'txt'], console.log);
+    fileManger4.fileUploadFromServer("recurs.txt", function() {
+        var string4  =  fileManger4.readFileAsString("recurs.txt");
+        editor4.setValue(string4, -1);
+    });
+
+console.log("done setting editor");
+csound.Play();
+};
+</script>
+</head>
+<body>
+<div class="reveal">
+  <div id="engine">
+<!-- Any section element inside of this container is displayed as a -->
+<!-- slide -->
+<div class="slides">
+<section>
+  <h2>Csound</h2>
+  <h3>A Sound and Music Programming System</h3>
+  <p>
+  <small>Victor Lazzarini</small>
+  </p>
+   
+</section>
+<section>
+  <section>
+  <h2>What is Csound?</h2>
+  <ul>
+  <li class="fragment fade-in">a composition system</li>
+  <li class="fragment fade-in">a programming environment</li>
+  <li class="fragment fade-in">a library</li>
+  <li class="fragment fade-in"> the engine for the app you are using</li>
+  </ul>
+  <p> <a href="http://csound.github.io">
+    csound.github.io </a> </p>
+  </section>
+  <section>
+  <img src="./levels.png" style="border-style:none"> </im>
+  </section>
+  </section>
+<section>
+  <section>
+  <h2>Where does it come from?</h2>
+  </section>
+  <section>
+  <img src="./music3.jpg"> </im>
+  </section>
+  <section>
+  <img src="./music4.jpg" height="500"> </im>
+  </section>
+  <section>
+  <img src="./music360.jpg"> </im>
+  </section>
+  <section>
+  <img src="./music11.jpg"> </im>
+  </section>
+</section>
+<section>  
+  <section>
+  <h2>How did it develop?</h2>
+  </section>
+  <section>
+  <p><b>1986</b>: first public release from MIT Media Lab</p>
+  </section>
+  <section>
+  <p><b>1990</b>: RT-capable, including MIDI input</p>
+  </section>
+  <section>
+  <p><b>1990s</b>: ported to the PC/DOS, Macintosh,
+  then to the Atari, Amiga, and other PC platforms.
+  Lots of new additions to the system.</p>
+  </section>
+  <section>
+  <p><b>2000</b>: launch of the Csound Book (MIT Press),
+  Csound version 3.</p>
+  </section>
+  <section>
+  <p><b>2003</b>: Code freeze (Csound 4.23); Csound
+  development moves to Sourceforge</p>
+  </section>
+  <section>
+  <p><b>2006</b>: Csound 5 is released.</p>
+  </section>
+  <section>
+  <p><b>2013</b>: Csound 6 is released; Csound
+  development moves to GitHub</p>
+  </section>
+</section>
+<section>
+  <section>
+  <h2> The System </h2> 
+  </section>
+  <section>
+  <h2> System Components </h2>
+    <ul>
+  <li class="fragment fade-in">Libraries (core + interfaces)</li>
+  <li class="fragment fade-in">APIs (desktop, mobile, web)</li>
+  <li class="fragment fade-in">(DS) Language</li>
+  <li class="fragment fade-in">Frontends and Applications</li>
+  </ul>
+  </section>
+</section>
+<section>
+    <section>
+  <h2> Libraries (core + interfaces) </h2>
+  </section>
+  <section>
+  <p>
+The core of Csound is a library that contains a compiler for
+its DSL, a performance engine for audio processing, and 
+over 1,750 unit generators (internal + plugins), as well as audio/MIDI
+backends.
+  </p>
+  </section>
+  <section>
+  <p>
+In addition to these, an interfaces library that is wrapped in various
+languages, as well as some some specific platform libraries 
+(CsoundObj for OSX/iOS/Android/Web).
+  </p>
+  </section>
+</section>
+<section>
+  <section>
+  <h2> APIs (desktop, mobile, web) </h2>
+  </section>
+  <section>
+  <p>
+The fundamental Csound API is provided in C, with a corresponding
+C++ interface. These are wrapped in various languages: Java, Python,
+Clojure, Lua, Lisp, etc.
+  </p>
+  </section>
+  <section>
+  <p>
+In addition, Csound provides a separate `interfaces' API that has some
+facilities for wrapped code, as well as threading support.
+  </p>
+  </section>
+  <section>
+  <p>
+Finally, the CsoundObj API is a layer above the fundamental one, 
+supporting mainly mobile and web programming (Objective-C, Java, JS).
+  </section>
+</section>
+<section>
+  <section>
+  <h2> The Language </h2>
+  </section>
+  <section>
+  <p>
+  Csound is a DS language designed to describe very precisely, but also
+succinctly, audio signal processing. Its main unit of programming is 
+  the <it>instrument</it>, which defines an object that process sound.
+  </p>
+  </section>
+  <section>
+  <p>
+The instrument can be instantiated any number of times; its code is
+composed of expressions involving variables of various types, possibly
+containing unit generators (defined by opcodes or functions).
+  </p>
+  </section>
+  <section>
+  <p>
+Unit generators can be either internal/plugin (provided by the system),
+or defined in the code (user-defined opcodes, UDOs).
+  </p>
+  </section>
+  <section>
+  <div id="editor2"></div>		   
+ 
+  </section>
+      <section>
+  <div id="editor3"></div>
+  </section>
+</section>
+    <section>
+    <section>   
+  <h2> Frontends </h2>
+  </section>
+  <section>
+ <p> The system is driven by a variety of frontends/applications, some of them
+maintained as part of the Csound project: </p>
+    <ul>
+  <li class="fragment fade-in">Csound CLI interface</li>
+  <li class="fragment fade-in">Csound6~ and Csound~ classes for PD/MaxMSP</li>
+  <li class="fragment fade-in">CsLADSPA plugin generator</li>
+  <li class="fragment fade-in">PNaCl Csound for web apps</li>
+  <li class="fragment fade-in"><a
+  href="https://play.google.com/store/apps/details?id=com.csounds.Csound6"
+      target="_blank">
+  Csound for Android</a></li>
+  <li class="fragment fade-in">Csound Examples for iOS/Android</li>
+  </ul>
+  </section>
+    <section>
+ <p> There are also several third-party frontends, of which four are
+of note: </p>
+    <ul>
+  <li class="fragment fade-in">CsoundQT IDE</li>
+  <li class="fragment fade-in">Cabbage plugin + standalone IDE</li>
+  <li class="fragment fade-in">Blue: composition system</li>
+  <li class="fragment fade-in">WinXSound: editor with CLI integration</li>
+  <li class="fragment fade-in">CsoundUnity: frontend for the game engine</li>
+  </ul>
+  </section>
+
+</section>
+  <section>
+  <section>
+  <h2>Uses</h2>
+  </section>
+
+  <section>
+  <h2> Application development </h2>
+  <p>
+Csound is heavily used for application development
+under various platforms. 
+  </p>
+<p>
+For example, there are many iOS apps available whose sound engine is
+provided by Csound. Another example is AudioKit,
+which is an application framework that is completely
+based on Csound (third-party).
+</p>
+  </section>
+  <section>
+  <h2> Research </h2>
+<p>
+Csound is also employed as research environment for a
+digital signal processing, computer music language
+development, parallel computing (e.g. GPGPUs), sonification,
+psychoacoustics, etc.
+</p>
+<p>
+It can be used alone, or in combination with scripting
+languages such as Python, and scientific modules.
+  For instance, the <b> icsound </b>module, which is another frontend provided
+by the system, allows for easy integration with the iPython environment.
+</p>
+  </section>
+  <section>
+  <h2>Live electronics
+  </h2>
+<p>
+Csound can be used for live electronics setups, as it can deliver
+very efficient implementations of audio processing with low-latency
+support. Interfaces can be constructed using its various frontends,
+or via scripting. Network, OSC and MIDI are readily available
+for integration.
+  <p>
+  </p>
+In particular, its use of MIDI is very straightforward, allowing the
+easy development of software synthesizers directly as Csound
+instruments (with no need for low-level message management,
+voice allocation, etc., although this is also possible if required)
+</p>
+  </section>
+  <section>
+  <h2> Installations, IoMT </h2>
+Due to its wide connectivity options, Csound has been used as
+the main component in various installations. An example is
+Flounder in Norway, an open air installation that is being streamed
+to the web, and that has been running continuously since 2006.
+  <p>
+  </p>
+Lately, with the introduction of small computing devices, Csound
+can be used as a sound engine for Internet of Musical Things
+applications (e.g. distributed, interactive devices, etc 
+across the network) </p>
+  </section>
+  <section>
+<h2> Composition, Music Production </h2>
+<p>
+Csound was originally designed as an environment for computer
+music creation, and it still is. Not only it provides an unrivalled
+sonic palette, but it also allows users to navigate between various
+systems and languages, in coordination with it. 
+</p>
+<p>
+For instance, Csound can be used to develop plugins for a
+wide variety of hosts, and thus can be easily integrated into
+a music production workflow.
+</p>
+  </section>
+</section>
+  <section>
+  <section>
+  <h2> A Composition Case Study<h2>
+  </section>
+  <section>
+<h2>Peeglid</h2>
+<p>
+This is a piece for voice, flute, kannel, cello, and computer. The
+latter part is performed by Csound.
+</p>
+</section>
+<section>
+<p>
+The title of the piece, <it> Peeglid </it>, 'mirrors' in Estonian, refers
+to the basic idea developed in the piece: <it> recursion </it>. Recursion
+is a form of self introspection, and it is used in three ways in this
+piece: as a programming approach; melodically; and defining the large-scale
+sonic palette.  
+</p>
+</section>
+<section>
+<h2> Programming </h2>
+<p>
+Csound supports recursion very well, at various levels. The one type
+used here is sometimes called <it> temporal recursion </it>. We
+can exemplify it with a simple instrument:
+<div id="editor4"></div>
+</p>
+</section>
+
+<section>
+  <H2> Melodic recursion </H2>
+<p>
+The idea of recursive sequences is extended to the development of
+melodic material. Many of the lines played by the instruments are
+based on recursive patterns where each sub-phrase contains a
+copy of the whole.
+  <p>
+  </p>
+From this basic principle, I composed the melodic lines, emphasising
+some specific pitches, depending on the context and the musical
+gestures I wanted to create.
+  </p>
+</section>
+<section>
+  <H2>Sound palette </H2>
+<p>
+Mirroring occurs in the sound palette by the use of synthesised material
+that connects to one or more of the live instruments. Each section of
+the piece is defined by a <it> signature </it> timbre, which are connected to
+the original ensemble sounds.
+  <p>
+  </p>
+For instance, this is very clear in the beginning, where there is a 
+mirroring between the kannel and the synthesised plucked-string
+sounds of the computer.
+</p>
+</section>
+<section>
+  <H2>Practical aspects </h2>
+<p>  
+The computer part does not use any live audio inputs; however it uses
+indeterminacy heavily: performances are guaranteed never to be 
+the same. This works both in terms of how the sounds are generated,
+and also the duration of certain sections.
+</p>
+In order to keep the performers synchronised, two methods can be used:
+a GUI displaying the section and time in seconds (performing computer
+screen); a mobile app (for android) displaying the same information,
+connected via OSC (through wifi).
+</p>
+</section>
+<section>
+<iframe width="100%" height="450" scrolling="no" frameborder="no"
+src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/173181041&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
+</section>
+</section>
+<section>
+<section>
+  <H2>Conclusions </h2>
+</section>
+<section>
+<H2>A sound and music computing system</h2>
+<p>
+This talk has demonstrated the use of Csound as a Sound and Music
+Computing system. I have outlined the main aspects of the system,
+showing its current status.
+</p><p>
+If you want to study it further, you can start by looking at the
+project main page at
+</p>
+<p>
+<a href="http://csound.github.io"> csound.github.io </p>
+<p>
+</section>
+</section>
+</div>
+</div>
+</div>
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+<script>
+// Full list of configuration options available at:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+controls: true,
+progress: true,
+history: true,
+center: true,
+minScale:1,
+maxScale:1,
+transition: 'zoom', // none/fade/slide/convex/concave/zoom
+// Optional reveal.js plugins
+dependencies:
+[
+{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+{ src: 'plugin/zoom-js/zoom.js', async: true },
+{ src: 'plugin/notes/notes.js', async: true }
+]
+});
+
+            </script>
+
+    </body>
+</html>

@@ -1,0 +1,11 @@
+instr 1
+ out(linenr(/* envelope */             
+     moogladder(/* filter */
+     vco2(p(4),p(5)),/* osc */
+     p(5)+linenr(p(5)*10,0.2,0.1,0.01), 
+     0.8),
+     0.01,0.1,0.01))
+endin                  
+schedule(1,0,3,0dbfs/2,500) 
+
+
