@@ -61,7 +61,7 @@ function handleMessage(message) {
 
 <script>
 function moduleDidLoad() {
-    var editorDiv2 = document.getElementById("editor2")
+    var editorDiv2 = document.getElementById("cseditor2")
         var editor2 = new TextView(editorDiv2, csound.CompileOrc, "editor");
 
     var fileManger2 = new FileManager(['csd', 'txt'], console.log);
@@ -70,7 +70,7 @@ function moduleDidLoad() {
         editor2.setValue(string2, -1);
      });
 
-    var editorDiv3 = document.getElementById("editor3")
+    var editorDiv3 = document.getElementById("cseditor3")
         var editor3 = new TextView(editorDiv3, csound.CompileOrc, "editor");
 
     var fileManger3 = new FileManager(['csd', 'txt'], console.log);
@@ -79,7 +79,7 @@ function moduleDidLoad() {
         editor3.setValue(string3, -1);
     });
 
-    var editorDiv4 = document.getElementById("editor4")
+    var editorDiv4 = document.getElementById("cseditor4")
         var editor4 = new TextView(editorDiv4, csound.CompileOrc, "editor");
 
     var fileManger4 = new FileManager(['csd', 'txt'], console.log);
@@ -253,11 +253,11 @@ or defined in the code (user-defined opcodes, UDOs).
   </p>
   </section>
   <section>
-  <div id="editor2"></div>		   
+  <div id="cseditor2"></div>		   
  
   </section>
       <section>
-  <div id="editor3"></div>
+  <div id="cseditor3"></div>
   </section>
 </section>
     <section>
@@ -396,7 +396,7 @@ sonic palette.
 Csound supports recursion very well, at various levels. The one type
 used here is sometimes called <it> temporal recursion </it>. We
 can exemplify it with a simple instrument:
-<div id="editor4"></div>
+<div id="cseditor4"></div>
 </p>
 </section>
 

@@ -59,6 +59,42 @@
     border-width: 1px;
 }
 
+#cseditor2 {
+
+    width:700x;
+    height:300px;
+    text-align:left;
+    font-size:12px;
+    border-color:#8F908A;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#cseditor3 {
+
+    width:700px;
+    height:300px;
+    text-align:left;
+    font-size:12px;
+    border-color:#8F908A;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#cseditor4 {
+
+    width:400px;
+    height:200px;
+    text-align:left;
+    font-size:12px;
+    border-color:#8F908A;
+    border-style: solid;
+    border-width: 1px;
+}
+
+
+
+
 #content { 
 		margin: 50px auto 0px auto; padding: 25px 25px 15px 25px;
 		width: 800px; min-width: 300px; overflow: auto;
