@@ -177,12 +177,44 @@ csound.Play();
   </section>
   <section>
   <h2> System Components </h2>
-    <ul>
+  <ul>
+   <li class="fragment fade-in">(DS) Language</li>
   <li class="fragment fade-in">Libraries (core + interfaces)</li>
   <li class="fragment fade-in">APIs (desktop, mobile, web)</li>
-  <li class="fragment fade-in">(DS) Language</li>
   <li class="fragment fade-in">Frontends and Applications</li>
   </ul>
+  </section>
+  </section>
+  <section>
+  <section>
+  <h2> The Language </h2>
+  </section>
+  <section>
+  <p>
+  Csound is a DS language designed to describe very precisely, but also
+succinctly, audio signal processing. Its main unit of programming is 
+  the <it>instrument</it>, which defines an object that process sound.
+  </p>
+  </section>
+  <section>
+  <p>
+The instrument can be instantiated any number of times; its code is
+composed of expressions involving variables of various types, possibly
+containing unit generators (defined by opcodes or functions).
+  </p>
+  </section>
+  <section>
+  <p>
+Unit generators can be either internal/plugin (provided by the system),
+or defined in the code (user-defined opcodes, UDOs).
+  </p>
+  </section>
+  <section>
+  <div id="cseditor2"></div>		   
+ 
+  </section>
+      <section>
+  <div id="cseditor3"></div>
   </section>
 </section>
 <section>
@@ -228,38 +260,7 @@ Finally, the CsoundObj API is a layer above the fundamental one,
 supporting mainly mobile and web programming (Objective-C, Java, JS).
   </section>
 </section>
-<section>
-  <section>
-  <h2> The Language </h2>
-  </section>
-  <section>
-  <p>
-  Csound is a DS language designed to describe very precisely, but also
-succinctly, audio signal processing. Its main unit of programming is 
-  the <it>instrument</it>, which defines an object that process sound.
-  </p>
-  </section>
-  <section>
-  <p>
-The instrument can be instantiated any number of times; its code is
-composed of expressions involving variables of various types, possibly
-containing unit generators (defined by opcodes or functions).
-  </p>
-  </section>
-  <section>
-  <p>
-Unit generators can be either internal/plugin (provided by the system),
-or defined in the code (user-defined opcodes, UDOs).
-  </p>
-  </section>
-  <section>
-  <div id="cseditor2"></div>		   
- 
-  </section>
-      <section>
-  <div id="cseditor3"></div>
-  </section>
-</section>
+
     <section>
     <section>   
   <h2> Frontends </h2>
